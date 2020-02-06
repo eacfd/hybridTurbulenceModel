@@ -1,5 +1,0 @@
-SOURCE = \
-makeTurbModels.C \
-turbulenceModels/derivedFvPatchFields/wallFunctions/omegaWallFunctions/omegaWallFunctionHyb/omegaWallFunctionFvPatchScalarFieldHyb.C \
-
-# sources
