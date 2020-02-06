@@ -102,6 +102,20 @@ SmagorinskySgs<BasicTurbulenceModel>::SmagorinskySgs
         transport,
         propertiesName
     ),
+    
+    k_
+    (
+        IOobject
+        (
+            IOobject::groupName("kSgs", this->alphaRhoPhi_.group()),
+            this->runTime_.timeName(),
+            this->mesh_,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        this->mesh_,
+        dimensionedScalar("kSgs", dimensionSet(0, 2, -2, 0, 0, 0, 0), scalar(0.0))
+    ),
 
     Ck_
     (
@@ -163,6 +177,8 @@ template<class BasicTurbulenceModel>
 void SmagorinskySgs<BasicTurbulenceModel>::correct()
 {
     LESeddyViscositySgs<BasicTurbulenceModel>::correct();
+    
+    k_ = k(fvc::grad(this->U_));
     correctNut();
 }
 

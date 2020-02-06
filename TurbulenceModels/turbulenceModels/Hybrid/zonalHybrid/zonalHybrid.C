@@ -80,7 +80,7 @@ zonalHybrid<BasicTurbulenceModel>::zonalHybrid
     (
         IOobject
         (
-            "zonal",
+            "zones",
             this->runTime_.timeName(),
             this->mesh_,
             IOobject::MUST_READ,
@@ -194,7 +194,7 @@ void zonalHybrid<BasicTurbulenceModel>::correct()
     //calculate Hybrid viscousity
     const volScalarField& lesNuSgs = lesPtr_->nut();
     const volScalarField& lesK = lesPtr_->k();
-
+    
     this->nut_ = rasNut;
     mutualK_ = rasK;
 

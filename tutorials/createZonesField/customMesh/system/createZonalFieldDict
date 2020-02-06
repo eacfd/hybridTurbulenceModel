@@ -1,0 +1,35 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1812                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      createZonalFieldDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+Algorithm custom;//cellZones
+
+cellZonesDict
+{
+    LESCellZoneName        LESZone;
+    BlendedCellZoneName    BlendedZone;
+}
+
+customDict
+{
+    minEdge          0.00625;
+    blendedDist      0.05;
+    clearField       false;
+    neighbourCells   3;
+    scaleFactor      1.15;
+}
+
+
+// ************************************************************************* //

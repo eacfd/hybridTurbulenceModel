@@ -1,0 +1,10 @@
+#!/bin/sh
+
+cd TurbulenceModels; wclean libso; cd ../
+
+cd utilities/createZonesField; wclean; cd ../../
+
+#
+#END-OF-FILE
+#
+

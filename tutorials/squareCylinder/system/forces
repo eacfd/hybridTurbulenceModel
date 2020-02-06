@@ -1,0 +1,22 @@
+forceCoeffs
+{
+    type forceCoeffs;
+    libs ("libforces.so");
+    patches (wall); //change to your patch name
+    // Name of fields
+    pName p;
+    Uname U;
+    // Dump to file
+    log true;
+    rho rhoInf;
+    rhoInf  1.2;
+    CofR (0 0 0);
+    liftDir (0 1 0);
+    dragDir (1 0 0);
+    pitchAxis (0 0 1);
+    magUInf 20;
+    lRef 1;
+    Aref 0.015;
+    writeControl timeStep;
+    writeInterval 5;
+}

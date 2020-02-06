@@ -101,6 +101,8 @@ protected:
 
     // Protected data
 
+        volScalarField k_;
+
         dimensionedScalar Ck_;
 
 
@@ -154,7 +156,7 @@ public:
         //- Return SGS kinetic energy
         virtual tmp<volScalarField> k() const
         {
-            return k(fvc::grad(this->U_));
+            return k_; //k(fvc::grad(this->U_));
         }
 
         //- Return sub-grid dissipation rate

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cd TurbulenceModels; wmake libso; cd ../
+
+cd utilities/createZonesField; wmake; cd ../../
+
+#
+#END-OF-FILE
+#
+
+

@@ -1,0 +1,10 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions  # Tutorial clean functions
+
+cleanTimeDirectories
+
+rm -rf VTK
+rm -rf postProcessing
+rm -rf processor*
+rm -rf constant/polyMesh
