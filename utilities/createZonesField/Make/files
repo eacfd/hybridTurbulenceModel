@@ -1,4 +1,4 @@
 createZonesField.C
 
-EXE = $(FOAM_USER_APPBIN)/createZonesField
+EXE = $(FOAM_APPBIN)/createZonesField
 
