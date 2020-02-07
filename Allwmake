@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd TurbulenceModels; wmake libso; cd ../
+cd libHybridTurbulenceModel; wmake libso; cd ../
 
 cd utilities/createZonesField; wmake; cd ../../
 

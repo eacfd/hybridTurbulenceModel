@@ -1,0 +1,4 @@
+TurbulenceModels/makeTurbModels.C
+TurbulenceModels/turbulenceModels/derivedFvPatchFields/wallFunctions/omegaWallFunctions/omegaWallFunctionHyb/omegaWallFunctionFvPatchScalarFieldHyb.C
+
+LIB = $(FOAM_USER_LIBBIN)/libHybridTurbulenceModel
