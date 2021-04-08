@@ -159,6 +159,23 @@ tmp<volScalarField> kEqnSgs<BasicTurbulenceModel>::epsilon() const
     );
 }
 
+template<class BasicTurbulenceModel>
+tmp<volScalarField> kEqnSgs<BasicTurbulenceModel>::omega() const
+{
+    volScalarField epsilon(this->Ce_*k()*sqrt(k())/this->delta());
+
+    return tmp<volScalarField>::New
+    (
+        IOobject
+        (
+            IOobject::groupName("omega", this->alphaRhoPhi_.group()),
+            this->runTime_.timeName(),
+            this->mesh_
+        ),
+        epsilon/(0.09*k())
+    );
+}
+
 
 template<class BasicTurbulenceModel>
 void kEqnSgs<BasicTurbulenceModel>::correct()

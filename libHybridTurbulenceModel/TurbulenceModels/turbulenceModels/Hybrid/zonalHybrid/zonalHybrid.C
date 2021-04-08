@@ -143,6 +143,14 @@ tmp<volScalarField> zonalHybrid<BasicTurbulenceModel>::epsilon() const
 }
 
 template<class BasicTurbulenceModel>
+tmp<volScalarField> zonalHybrid<BasicTurbulenceModel>::omega() const
+{
+    dimensionedScalar nutSmall ("nutSmall", dimensionSet(0, 2, -1, 0, 0, 0, 0), SMALL);
+    return Cmu_*sqr(mutualK_) / (this->nut_ + nutSmall) / 0.09 / mutualK_;
+}
+
+
+template<class BasicTurbulenceModel>
 bool zonalHybrid<BasicTurbulenceModel>::read()
 {
     if (eddyViscosityHybrid<HybridModel<BasicTurbulenceModel>>::read())

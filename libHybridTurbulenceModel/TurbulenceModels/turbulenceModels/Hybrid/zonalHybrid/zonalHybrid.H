@@ -155,6 +155,9 @@ public:
         virtual tmp<volScalarField> LESRegion() const;
         
         virtual tmp<volScalarField> epsilon() const;
+        
+        //- Return sub-grid specific dissipation rate
+        virtual tmp<volScalarField> omega() const;
 
         //- Correct nuTilda and related properties
         virtual void correct();

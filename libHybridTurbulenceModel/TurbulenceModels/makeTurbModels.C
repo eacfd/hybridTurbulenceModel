@@ -24,26 +24,20 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "IncompressibleTurbulenceModel.H"
-#include "transportModel.H"
 #include "addToRunTimeSelectionTable.H"
-#include "makeTurbulenceModel.H"
+#include "turbulentTransportModels.H"
 
-//#include "laminarModel.H"
-//#include "RASModel.H"
-#include "LESModel.H"
 #include "HybridModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 
 #define makeHybridTurbulenceModelTypes(Alpha, Rho, baseModel, BaseModel, Transport)  \
-                                                                               \
-    namespace Foam                                                             \
-    {                                                                          \
-        typedef BaseModel<Transport> Transport##BaseModel;                      \
-        typedef LESModel<Transport##BaseModel> LES##Transport##BaseModel;        \
-        typedef HybridModel<BaseModel<Transport>> Hybrid##Transport##BaseModel;  \
-    }
+                                                                                     \
+    namespace Foam                                                                   \
+    {                                                                                \
+        typedef HybridModel<BaseModel<Transport>> Hybrid##Transport##BaseModel;      \
+    }                                                                                \
 
     makeHybridTurbulenceModelTypes
     (
@@ -53,25 +47,11 @@ License
         IncompressibleTurbulenceModel,
         transportModel
     );
-    
+
 #define makeHybridBaseTurbulenceModel(Alpha, Rho, baseModel, BaseModel, Transport)   \
                                                                                \
     namespace Foam                                                             \
     {                                                                          \
-        typedef TurbulenceModel                                                \
-        <                                                                      \
-            Alpha,                                                             \
-            Rho,                                                               \
-            baseModel,                                                         \
-            Transport                                                          \
-        > Transport##baseModel;                                                \
-                                                                               \
-        defineTemplateRunTimeSelectionTable                                    \
-        (                                                                      \
-            Transport##baseModel,                                              \
-            dictionary                                                         \
-        );                                                                     \
-                                                                               \
                                                                                \
         defineNamedTemplateTypeNameAndDebug(Hybrid##Transport##BaseModel, 0); \
                                                                                \
@@ -99,9 +79,6 @@ License
     makeTemplatedTurbulenceModel                                               \
     (transportModelIncompressibleTurbulenceModel, Hybrid, Type)
 
-#define makeLESModel(Type)                                                     \
-    makeTemplatedTurbulenceModel                                               \
-    (transportModelIncompressibleTurbulenceModel, LES, Type)
 
 #include "SmagorinskySgs.H"
 makeLESModel(SmagorinskySgs);
