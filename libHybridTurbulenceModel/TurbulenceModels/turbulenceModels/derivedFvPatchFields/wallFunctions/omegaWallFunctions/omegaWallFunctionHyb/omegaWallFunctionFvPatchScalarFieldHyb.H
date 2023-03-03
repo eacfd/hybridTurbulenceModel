@@ -2,8 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
+-------------------------------------------------------------------------------
+    Copyright (C) 2011-2016, 2019 OpenFOAM Foundation
+    Copyright (C) 2019-2022 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -28,62 +31,39 @@ Group
     grpWallFunctions
 
 Description
-    This boundary condition provides a wall constraint on turbulence specific
-    dissipation, omega for both low and high Reynolds number turbulence models.
-
-    The near-wall omega may be either blended between the viscous region and
-    logarithmic region values using:
-
-        \f[
-            \omega = sqrt(\omega_{vis}^2 + \omega_{log}^2)
-        \f]
-
-    where
-
-    \vartable
-        \omega_{vis} | omega in viscous region
-        \omega_{log} | omega in logarithmic region
-    \endvartable
-
-    see eq.(15) of:
-    \verbatim
-        Menter, F., Esch, T.
-        "Elements of Industrial Heat Transfer Prediction"
-        16th Brazilian Congress of Mechanical Engineering (COBEM),
-        Nov. 2001
-    \endverbatim
-
-    or switched between these values based on the laminar-to-turbulent y+ value
-    derived from kappa and E.  Recent tests have shown that the standard
-    switching method provides more accurate results for 10 < y+ < 30 when used
-    with high Reynolds number wall-functions and both methods provide accurate
-    results when used with continuous wall-functions.  Based on this the
-    standard switching method is used by default.
+    This boundary condition provides a wall function for the specific
+    dissipation rate (i.e. \c omega) and the turbulent kinetic energy
+    production contribution (i.e. \c G) for low- and high-Reynolds number
+    applications.
 
 Usage
-    \table
-        Property     | Description             | Required    | Default value
-        Cmu          | Model coefficient       | no          | 0.09
-        kappa        | von Karman constant     | no          | 0.41
-        E            | Model coefficient       | no          | 9.8
-        beta1        | Model coefficient       | no          | 0.075
-        blended      | Blending switch         | no          | false
-    \endtable
-
     Example of the boundary condition specification:
     \verbatim
     <patchName>
     {
+        // Mandatory entries
         type            omegaWallFunction;
+
+        // Optional entries
+        beta1           0.075;
+
+        // Inherited entries
+        ...
     }
     \endverbatim
 
-See also
-    Foam::fixedInternalValueFvPatchField
-    Foam::epsilonWallFunctionFvPatchScalarField
+    \table
+      Property  | Description                     | Type   | Reqd | Deflt
+      type      | Type name: omegaWallFunction    | word   | yes  | -
+      beta1     | Model coefficient               | scalar | no   | 0.075
+    \endtable
+
+    The inherited entries are elaborated in:
+      - \link wallFunctionCoefficients.H \endlink
+      - \link wallFunctionBlenders.H \endlink
 
 SourceFiles
-    omegaWallFunctionFvPatchScalarField.C
+    omegaWallFunctionFvPatchScalarFieldHyb.C
 
 \*---------------------------------------------------------------------------*/
 
@@ -91,6 +71,8 @@ SourceFiles
 #define omegaWallFunctionFvPatchScalarFieldHyb_H
 
 #include "fixedValueFvPatchField.H"
+#include "wallFunctionCoefficients.H"
+#include "wallFunctionBlenders.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -100,43 +82,20 @@ namespace Foam
 class turbulenceModel;
 
 /*---------------------------------------------------------------------------*\
-             Class omegaWallFunctionFvPatchScalarField Declaration
+             Class omegaWallFunctionFvPatchScalarFieldHyb Declaration
 \*---------------------------------------------------------------------------*/
 
 class omegaWallFunctionFvPatchScalarFieldHyb
 :
-    public fixedValueFvPatchField<scalar>
+    public fixedValueFvPatchField<scalar>,
+    private wallFunctionBlenders
 {
 protected:
 
-    // Protected data
+    // Protected Data
 
         //- Tolerance used in weighted calculations
         static scalar tolerance_;
-
-        //- Cmu coefficient
-        scalar Cmu_;
-
-        //- Von Karman constant
-        scalar kappa_;
-
-        //- E coefficient
-        scalar E_;
-
-        //- beta1 coefficient
-        scalar beta1_;
-
-        //- beta1 coefficient
-        Switch blended_;
-
-        //- y+ at the edge of the laminar sublayer
-        scalar yPlusLam_;
-
-        //- Local copy of turbulence G field
-        scalarField G_;
-
-        //- Local copy of turbulence omega field
-        scalarField omega_;
 
         //- Initialised flag
         bool initialised_;
@@ -144,24 +103,30 @@ protected:
         //- Master patch ID
         label master_;
 
+        //- beta1 coefficient
+        scalar beta1_;
+
+        //- Wall-function coefficients
+        wallFunctionCoefficients wallCoeffs_;
+
+        //- Local copy of turbulence G field
+        scalarField G_;
+
+        //- Local copy of turbulence omega field
+        scalarField omega_;
+
         //- List of averaging corner weights
         List<List<scalar>> cornerWeights_;
 
 
     // Protected Member Functions
 
-        //- Check the type of the patch
-        virtual void checkType();
-
-        //- Write local wall function variables
-        virtual void writeLocalEntries(Ostream&) const;
-
         //- Set the master patch - master is responsible for updating all
-        //  wall function patches
+        //- wall function patches
         virtual void setMaster();
 
         //- Create the averaging weights for cells which are bounded by
-        //  multiple wall function faces
+        //- multiple wall function faces
         virtual void createAveragingWeights();
 
         //- Helper function to return non-const access to an omega patch
@@ -194,6 +159,9 @@ protected:
             return master_;
         }
 
+        //- Write local wall function variables
+        void writeLocalEntries(Ostream&) const;
+
 
 public:
 
@@ -219,8 +187,8 @@ public:
         );
 
         //- Construct by mapping given
-        // omegaWallFunctionFvPatchScalarField
-        //  onto a new patch
+        //- omegaWallFunctionFvPatchScalarFieldHyb
+        //- onto a new patch
         omegaWallFunctionFvPatchScalarFieldHyb
         (
             const omegaWallFunctionFvPatchScalarFieldHyb&,
@@ -263,8 +231,11 @@ public:
             );
         }
 
+    //- Destructor
+    virtual ~omegaWallFunctionFvPatchScalarFieldHyb() = default;
 
-    // Member functions
+
+    // Member Functions
 
         // Access
 
@@ -275,7 +246,7 @@ public:
             scalarField& omega(bool init = false);
 
 
-        // Evaluation functions
+        // Evaluation
 
             //- Update the coefficients associated with the patch field
             virtual void updateCoeffs();

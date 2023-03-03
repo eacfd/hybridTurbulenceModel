@@ -25,7 +25,7 @@ startFrom       startTime;
 
 startTime       0;
 
-stopAt          endTime;
+stopAt          writeNow;//endTime;
 
 endTime         0.8;
 

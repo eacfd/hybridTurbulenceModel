@@ -10,7 +10,7 @@ runApplication topoSet
 runApplication createZonesField
 
 runApplication decomposePar -force
-runApplication mpirun -np 12 pisoFoam -parallel
+runApplication mpirun -np 4 pisoFoam -parallel
 runApplication reconstructPar
 
 runApplication foamToVTK
